@@ -1,25 +1,17 @@
-import paho.mqtt.client as mqtt
-import json
-from .database import save_reading
+from flask import Blueprint, jsonify
+import requests
 
-MQTT_BROKER = 'localhost'
-MQTT_TOPIC = 'home/energy'
+monitor_bp = Blueprint("monitor", __name__)
 
-def on_connect(client, userdata, flags, rc):
-    print("Connected with result code " + str(rc))
-    client.subscribe(MQTT_TOPIC)
+SHELLY_IP = "192.168.50.163"  # Change this if your plug IP is different
 
-def on_message(client, userdata, msg):
+@monitor_bp.route("/api/status")
+def get_status():
     try:
-        payload = json.loads(msg.payload.decode())
-        save_reading(payload)
-        print("Saved reading:", payload)
+        response = requests.get(f"http://{SHELLY_IP}/rpc/Switch.GetStatus?id=0")
+        data = response.json()
+        power = data['aenergy']['by_minute'][-1]
+        total = data['aenergy']['total']
+        return jsonify({"power": power, "total": total})
     except Exception as e:
-        print("Failed to save reading:", e)
-
-def start_monitor():
-    client = mqtt.Client()
-    client.on_connect = on_connect
-    client.on_message = on_message
-    client.connect(MQTT_BROKER, 1883, 60)
-    client.loop_start()
+        return jsonify({"error": str(e)}), 500

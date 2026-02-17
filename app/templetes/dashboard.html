@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Energy Monitor</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>⚡ ENERGY MONITOR</h1>
+
+    <div class="stats">
+      <div class="stat-card">🔌 Power<br><span id="power">-- W</span></div>
+      <div class="stat-card">🔋 Energy<br><span id="energy">-- kWh</span></div>
+      <div class="stat-card">📐 Voltage<br><span id="voltage">-- V</span></div>
+    </div>
+
+    <canvas id="powerChart" width="400" height="200"></canvas>
+  </div>
+
+  <script>
+    async function fetchReadings() {
+      const res = await fetch('/readings');
+      const data = await res.json();
+
+      // Update stats
+      document.getElementById('power').innerText = `${data.power} W`;
+      document.getElementById('energy').innerText = `${data.energy} kWh`;
+      document.getElementById('voltage').innerText = `${data.voltage} V`;
+
+      return data.history || [];
+    }
+
+    async function renderChart() {
+      const history = await fetchReadings();
+
+      const ctx = document.getElementById('powerChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: history.map(h => h.time),
+          datasets: [{
+            label: 'Power Usage (W)',
+            data: history.map(h => h.power),
+            fill: true,
+            borderColor: '#0af',
+            tension: 0.3
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    }
+
+    renderChart();
+    setInterval(renderChart, 5000); // refresh every 5 sec
+  </script>
+</body>
+</html>
