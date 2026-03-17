@@ -38,7 +38,8 @@ git clone https://github.com/DareeInn/Real-Time-Energy-Monitoring-System.git
 cd Real-Time-Energy-Monitoring-System
 pip install -r requirements.txt
 python run.py
-    
+```
+
 ## 📸 Screenshots
 
 ### Dashboard
