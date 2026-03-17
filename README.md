@@ -22,7 +22,19 @@ pip install -r requirements.txt
 python run.py
 ```
 
-## Screenshots
-Add your screenshots to the `screenshots/` folder and reference them here:
+## 📸 Screenshots
 
-![Dashboard Screenshot](screenshots/screenshot1.png)
+### Dashboard
+![Dashboard](screenshots/dashboard.jpeg)
+
+### Graph
+![Graph](screenshots/graph.jpeg)
+
+### Hardware Setup
+![Hardware](screenshots/Hardware.jpeg)
+
+### Live Code
+![Live Code](screenshots/live-code.jpeg)
+
+### Running System
+![Running](screenshots/running-code.jpeg)
